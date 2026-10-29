@@ -21,8 +21,6 @@ _PLUGIN_DIR = Path(__file__).resolve().parents[1]
 if str(_PLUGIN_DIR) not in sys.path:
     sys.path.insert(0, str(_PLUGIN_DIR))
 
-from engine.embed.fetch import ensure_model, load_lock  # noqa: E402
-
 
 def default_model_dir() -> Path:
     root = os.getenv("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
@@ -36,6 +34,10 @@ def main() -> int:
     parser.add_argument("--check", action="store_true", help="只校验，不下载")
     parser.add_argument("--lock", default=str(_PLUGIN_DIR / "models.lock.json"))
     args = parser.parse_args()
+
+    # 必须在 sys.path 就绪之后再导入；放到模块级会触发 E402，而 CI 的 ruff 用
+    # --ignore-noqa，`# noqa: E402` 在那里无效，所以只能在函数内 import。
+    from engine.embed.fetch import ensure_model, load_lock
 
     lock = load_lock(Path(args.lock))
     if not lock:
