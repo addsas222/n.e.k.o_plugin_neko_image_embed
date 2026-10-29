@@ -9,6 +9,7 @@ from __future__ import annotations
 import contextlib
 import hashlib
 import os
+import re
 import tempfile
 from pathlib import Path
 
@@ -78,7 +79,12 @@ def safe_relative(base: Path, rel: str) -> Path:
     """``rel`` 允许子目录（如 ``media/<sha>.jpg``），但必须落在 ``base`` 内。"""
     if not rel or "\x00" in rel:
         raise ValueError("相对路径不能为空")
-    candidate = Path(rel)
+    # 反斜杠在 POSIX 上只是普通字符，但存档可能被 Windows 写过；统一成 "/" 再判，
+    # 否则 "..\\evil.jpg" 在 Linux 上会被当成文件名放行（CI 就是这么抓到的）。
+    raw = rel.replace("\\", "/")
+    if re.match(r"^[A-Za-z]:", raw):
+        raise ValueError(f"非法相对路径: {rel!r}")
+    candidate = Path(raw)
     if candidate.is_absolute() or candidate.drive or ".." in candidate.parts:
         raise ValueError(f"非法相对路径: {rel!r}")
     resolved_base = base.resolve()
