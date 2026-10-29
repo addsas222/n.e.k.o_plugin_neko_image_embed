@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest_tmp/
+.ruff_cache/
+config/
+data/
+cache/
+models/
+*.bak
+*.bak-*
+
+# 本地状态库（宿主会在插件根写这个）
+store.db

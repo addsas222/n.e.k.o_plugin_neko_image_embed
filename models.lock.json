@@ -1,0 +1,36 @@
+{
+  "model": "clip-vit-base-patch32",
+  "repo": "Xenova/clip-vit-base-patch32",
+  "revision": "main",
+  "dim_note": "全模型导出，image_embeds / text_embeds 落在同一个 512 维空间；实际维度以会话输出为准。",
+  "files": [
+    {
+      "local": "model.onnx",
+      "remote": "onnx/model_quantized.onnx",
+      "algo": "sha256",
+      "digest": "0898a3facfdb27f0a041e57649b4989cfd094e4a0040d6ae75ed69917dfc7328",
+      "bytes": 153695702
+    },
+    {
+      "local": "tokenizer.json",
+      "remote": "tokenizer.json",
+      "algo": "git-sha1",
+      "digest": "bc1f77d20440541dd073ebae6f6c401087c7d34e",
+      "bytes": 2224119
+    },
+    {
+      "local": "preprocessor_config.json",
+      "remote": "preprocessor_config.json",
+      "algo": "git-sha1",
+      "digest": "e0675735fd0052745f2f7b7291e4aa7859389998",
+      "bytes": 520
+    },
+    {
+      "local": "config.json",
+      "remote": "config.json",
+      "algo": "git-sha1",
+      "digest": "e79bad158b04c235740f9b2ec320b17f4030f7a5",
+      "bytes": 4524
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+# 运行时配置模板。
+# 安装后宿主会把它逐字节复制到 <N.E.K.O>/plugins/neko_image_embed/config/plugin.toml，
+# 之后只改那份。本文件不得包含 [plugin] 段（清单归 plugin.toml）。
+
+[plugin_runtime]
+enabled = true
+auto_start = true
+
+[image_embed]
+# ---- 输入闸门 ----
+max_source_bytes = 33554432      # 32 MiB，超过直接拒
+max_source_pixels = 16777216     # 16 MP，超过直接拒（解压炸弹防线）
+min_sharpness = 40.0             # 拉普拉斯方差下限，低于此判为「糊」
+min_entropy = 2.0                # 灰度熵下限，低于此判为「近乎纯色」
+min_value = 0.45                 # 判定链给出的价值分下限
+max_risk = 0.60                  # 任一风险维度的上限
+dup_hamming_max = 6              # dHash 汉明距离 <= 此值视为近似重复
+
+# ---- 压缩与存储 ----
+store_long_edge = 1280
+store_jpeg_quality = 82
+store_max_bytes = 524288         # 512 KiB（inline push 的安全上限）
+thumb_edge = 256
+thumb_jpeg_quality = 75
+allow_animated = false           # false = 动图只取第 0 帧，并在结果里标 flattened
+
+# ---- 检索 ----
+default_top_k = 8
+max_search_k = 50
+max_scan_rows = 20000            # 余弦全扫的行数上限，超过按最近入库截断并告警
+
+# ---- 人设 ----
+persona_summary = ""             # 留空则读 <N.E.K.O>/config/characters.json
+characters_path = ""             # 留空走默认路径；换角色库时才填
+
+# ---- 自动收录 ----
+watch_frames = false             # img_watch 定时器：轮询 bus.frames 自动收录
+watch_interval_seconds = 30
+
+# 中文查询别名：CLIP 文本塔偏英文，纯中文查询效果差；这里按需补充映射。
+# [image_embed.query_aliases]
+# 猫 = "cat"
+# 表情包 = "meme sticker"
+
+[image_embed.embedder]
+# auto         = 按可用性挑：clip_onnx -> caption_text -> external
+# clip_onnx    = 本地 CLIP 视觉塔（首选，512 维左右）
+# caption_text = 判定链的 caption 走 CLIP 文本塔（同一向量空间）
+# external     = OpenAI 兼容 /embeddings（独立空间，换后端必须重建索引）
+backend = "auto"
+model_dir = ""                   # 留空 = <状态目录>/data/models/clip-vit-base-patch32
+hf_endpoint = "https://hf-mirror.com"
+allow_download = true
+external_base_url = ""
+external_api_key = ""
+external_model = ""
+external_dim = 0
+
+[image_embed.judge]
+# 逐级降级；任何一级失败都记进 errors 再走下一级。
+# zeroshot 是本地 CLIP 零样本打标（不需要模型、不需要密钥、不联网），
+# gateway 绑不上槽位时它就是主力；rules 永远兜底。
+order = ["gateway", "zeroshot", "laya", "kev", "semif", "jev", "rules"]
+timeout_seconds = 60
+max_completion_tokens = 700
+
+[image_embed.judge.laya]
+enabled = false
+protocol = "openai_chat"         # openai_chat | systemone
+base_url = ""
+api_key = ""
+model = ""
+vision = true                    # 端点若不支持图片会自动重试纯文本 digest
+
+[image_embed.judge.kev]
+enabled = false
+protocol = "systemone"           # POST <base_url>/v1/systemone，纯文本
+base_url = "http://127.0.0.1:8009"
+api_key = "local"
+model = "kev-latest"
+vision = false
+
+[image_embed.judge.semif]
+enabled = false
+protocol = "openai_chat"
+base_url = ""
+api_key = ""
+model = ""
+vision = true
+
+[image_embed.judge.jev]
+enabled = false                  # 在线、隐私末选，默认关
+protocol = "systemone"
+base_url = ""
+api_key = ""
+model = ""
+vision = false

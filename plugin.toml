@@ -1,0 +1,63 @@
+[plugin]
+id = "neko_image_embed"
+name = "图像记忆库"
+description = "把图片变成可检索的记忆：先做合规与质量闸门，再由判定链（宿主视觉模型 → laya → kev → semif → jev → 规则）结合当前人设决定是否收录，压缩后编码成向量入库。聊天时角色可检索并用图片回应。"
+short_description = "Image memory: guard -> persona judge -> compress -> CLIP embedding, searchable in chat."
+keywords = [
+    "图嵌入",
+    "图像嵌入",
+    "image embedding",
+    "向量",
+    "记忆",
+    "表情包",
+    "CLIP",
+    "neko_image_embed",
+]
+version = "0.1.0"
+type = "plugin"
+entry = "plugin.plugins.neko_image_embed:NekoImageEmbedPlugin"
+
+[plugin.author]
+name = "local"
+
+[plugin.sdk]
+recommended = ">=0.1.0,<0.2.0"
+supported = ">=0.1.0,<0.3.0"
+
+[plugin.i18n]
+default_locale = "zh-CN"
+locales_dir = "i18n"
+
+[plugin.ui]
+enabled = true
+
+[[plugin.ui.panel]]
+id = "main"
+title = "图像记忆库"
+entry = "static/index.html"
+context = "dashboard"
+permissions = ["state:read", "action:call"]
+
+# 判定用途：只在 gateway 这一级用到。宿主没绑定槽位时会在调用处 403，
+# 链路自动降级，不会阻断加载。
+[plugin.models.judge]
+label = "图像判定（视觉 + JSON）"
+description = "结合当前人设判断一张图是否值得收录，并给出价值/风险/描述/标签"
+required = false
+capabilities = ["text", "image_input"]
+
+[plugin.safety]
+sync_call_in_handler = "warn"
+
+[plugin_runtime]
+enabled = true
+auto_start = true
+
+# ---------------------------------------------------------------------------
+# 静态入口声明：宿主重扫插件时只认这里与 plugin.meta.json 的声明来重建入口表，
+# 不写的话 /plugins/refresh 之后面板 action 会 404。
+# tests/test_manifest_entries.py 会校验这里与 @plugin_entry 装饰器完全一致。
+# ---------------------------------------------------------------------------
+
+# 业务配置的首次模板在 config.example.toml；安装后宿主会复制到
+# <状态目录>/config/plugin.toml，改那里才生效。密钥一律留空。

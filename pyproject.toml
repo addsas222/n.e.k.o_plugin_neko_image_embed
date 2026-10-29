@@ -1,0 +1,25 @@
+[project]
+name = "neko_image_embed"
+version = "0.1.0"
+description = "N.E.K.O plugin: image memory with guard, persona judge and CLIP embeddings"
+requires-python = ">=3.11"
+dependencies = []
+license = { text = "GPL-3.0-only" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# 禁用内置 tmpdir 插件：它会在会话结束时 rmtree 临时目录，而本机的 safe-delete 钩子
+# 会把它搬去一个写不进去的全局目录，导致整个 pytest 进程以 1 退出。
+# 改由 tests/conftest.py 提供只创建、不删除的 tmp_path。
+addopts = "-q -p no:tmpdir"
+filterwarnings = [
+    "ignore::DeprecationWarning:PIL.*",
+]
+
+[tool.neko.build]
+exclude_dirs = ["config", "data", "cache", "models"]
+exclude_files = ["*.bak", "*.bak-*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
