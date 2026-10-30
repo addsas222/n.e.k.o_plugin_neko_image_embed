@@ -24,8 +24,20 @@ def _declared_entries() -> dict[str, str]:
                 continue
             kwargs = {kw.arg: kw.value for kw in deco.keywords}
             entry_id = kwargs["id"].value if "id" in kwargs else node.name
-            name = kwargs["name"].value if "name" in kwargs else ""
-            found[str(entry_id)] = str(name)
+            # name 现在可能是 tr("entries.x.name", default="...") 的调用
+            name_node = kwargs.get("name")
+            if isinstance(name_node, ast.Constant):
+                name = str(name_node.value)
+            elif isinstance(name_node, ast.Call):
+                defaults = [
+                    str(kw.value.value)
+                    for kw in name_node.keywords
+                    if kw.arg == "default" and isinstance(kw.value, ast.Constant)
+                ]
+                name = defaults[0] if defaults else ""
+            else:
+                name = ""
+            found[str(entry_id)] = name
     return found
 
 
@@ -83,7 +95,7 @@ def test_i18n_files_cover_every_entry() -> None:
         data = json.loads((ROOT / "i18n" / name).read_text(encoding="utf-8"))
         assert "plugin.name" in data
         for entry_id in entries:
-            assert f"entry.{entry_id}.name" in data, f"{name} 缺 entry.{entry_id}.name"
+            assert f"entries.{entry_id}.name" in data, f"{name} 缺 entries.{entry_id}.name"
 
 
 def test_static_panel_declared_and_present() -> None:

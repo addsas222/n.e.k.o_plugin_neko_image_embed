@@ -39,6 +39,7 @@ from plugin.sdk.plugin import (
     neko_plugin,
     plugin_entry,
     timer_interval,
+    tr,
 )
 
 from .engine.config import Settings, load_settings
@@ -618,8 +619,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_ingest",
-        name="收录图片",
-        description="对一张图跑完整流水线：合规闸门 → 人设判定 → 压缩 → 向量化入库。",
+        name=tr("entries.img_ingest.name", default="收录图片"),
+        description=tr("entries.img_ingest.description", default="对一张图跑完整流水线：合规闸门 → 人设判定 → 压缩 → 向量化入库。"),
         input_schema=_INGEST_SCHEMA,
         timeout=180.0,
         llm_result_fields=["accepted", "code", "id", "detail", "verdict"],
@@ -689,8 +690,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_search",
-        name="检索图片",
-        description="用文字、另一张图或已有 id 检索图像记忆，返回相似度排序。",
+        name=tr("entries.img_search.name", default="检索图片"),
+        description=tr("entries.img_search.description", default="用文字、另一张图或已有 id 检索图像记忆，返回相似度排序。"),
         input_schema=_SEARCH_SCHEMA,
         timeout=60.0,
         llm_result_fields=["count", "results"],
@@ -760,8 +761,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_send",
-        name="发送图片",
-        description="把库里的图片压缩后推进当前聊天。",
+        name=tr("entries.img_send.name", default="发送图片"),
+        description=tr("entries.img_send.description", default="把库里的图片压缩后推进当前聊天。"),
         input_schema=_SEND_SCHEMA,
         timeout=30.0,
     )
@@ -791,8 +792,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_forget",
-        name="遗忘图片",
-        description="软删除一条图片记忆；文件保留，直到 img_gc 硬删。",
+        name=tr("entries.img_forget.name", default="遗忘图片"),
+        description=tr("entries.img_forget.description", default="软删除一条图片记忆；文件保留，直到 img_gc 硬删。"),
         input_schema=_FORGET_SCHEMA,
         timeout=15.0,
     )
@@ -817,8 +818,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_gc",
-        name="清理索引",
-        description="清理墓碑记录与其文件，或把存活记录裁剪到指定数量。",
+        name=tr("entries.img_gc.name", default="清理索引"),
+        description=tr("entries.img_gc.description", default="清理墓碑记录与其文件，或把存活记录裁剪到指定数量。"),
         input_schema=_GC_SCHEMA,
         timeout=120.0,
     )
@@ -858,8 +859,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_set_judge",
-        name="切换判断层",
-        description="判断层三选一：模型 / 宿主槽位 / 启发式。写入运行时配置后由宿主热重载。",
+        name=tr("entries.img_set_judge.name", default="切换判断层"),
+        description=tr("entries.img_set_judge.description", default="判断层三选一：模型 / 宿主槽位 / 启发式。写入运行时配置后由宿主热重载。"),
         input_schema=_JUDGE_MODE_SCHEMA,
         timeout=20.0,
     )
@@ -898,8 +899,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_status",
-        name="运行状态",
-        description="编码器、判定链、存储与人设来源的自检快照。",
+        name=tr("entries.img_status.name", default="运行状态"),
+        description=tr("entries.img_status.description", default="编码器、判定链、存储与人设来源的自检快照。"),
         timeout=30.0,
     )
     async def img_status(self, **_):
@@ -979,8 +980,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_board",
-        name="图片面板",
-        description="给 UI 面板用：列出或搜索图片，附带缩略图 data URL。",
+        name=tr("entries.img_board.name", default="图片面板"),
+        description=tr("entries.img_board.description", default="给 UI 面板用：列出或搜索图片，附带缩略图 data URL。"),
         input_schema=_BOARD_SCHEMA,
         timeout=60.0,
     )
@@ -1028,8 +1029,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_log",
-        name="运行日志",
-        description="最近的活动与错误记录，面板用。",
+        name=tr("entries.img_log.name", default="运行日志"),
+        description=tr("entries.img_log.description", default="最近的活动与错误记录，面板用。"),
         input_schema=_LOG_SCHEMA,
         timeout=30.0,
     )
@@ -1053,8 +1054,8 @@ class NekoImageEmbedPlugin(NekoPluginBase):
 
     @plugin_entry(
         id="img_reassign",
-        name="改归属",
-        description="把图片归到某个角色名下；用于收回「未归属」的旧记录。",
+        name=tr("entries.img_reassign.name", default="改归属"),
+        description=tr("entries.img_reassign.description", default="把图片归到某个角色名下；用于收回「未归属」的旧记录。"),
         input_schema=_REASSIGN_SCHEMA,
         timeout=20.0,
     )

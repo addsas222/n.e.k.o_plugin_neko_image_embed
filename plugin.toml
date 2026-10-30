@@ -13,7 +13,7 @@ keywords = [
     "CLIP",
     "neko_image_embed",
 ]
-version = "0.1.1"
+version = "0.1.2"
 type = "plugin"
 entry = "plugin.plugins.neko_image_embed:NekoImageEmbedPlugin"
 
