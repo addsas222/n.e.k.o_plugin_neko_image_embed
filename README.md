@@ -9,9 +9,10 @@
 图片字节
   │
   ├─ 1. guard     解码/尺寸/像素上限/EXIF 剥离/清晰度/熵/dHash 去重     ← 不调模型
-  ├─ 2. judge     gateway(视觉+JSON) → laya → kev → semif → jev → rules  ← 逐级降级
-  ├─ 3. compress  1280px / q82 / ≤512 KiB（压不进就报错，不硬发）
-  └─ 4. embed     CLIP ViT-B/32 → 向量 → SQLite（float32 BLOB + numpy 余弦）
+  ├─ 2. perceive  Sensenova 识图 → CLIP 零样本兜底（caption / tags）    ← 视觉层
+  ├─ 3. judge     模型 / 宿主槽位 / 启发式 三选一，失败降级到启发式      ← 判断层
+  ├─ 4. compress  1280px / q82 / ≤512 KiB（压不进就报错，不硬发）
+  └─ 5. embed     CLIP ViT-B/32 → 向量 → SQLite（float32 BLOB + numpy 余弦）
 ```
 
 「拒收」是正常结果（`accepted=false` + 原因）；「编码器不可用 / 写库失败 / 压不下去」才是
@@ -58,8 +59,8 @@ python plugins\neko_image_embed\tools\fetch_model.py --check   # 只校验
 
 | 键 | 作用 |
 |---|---|
-| `[image_embed.judge].order` | 判定链顺序，默认 `gateway → zeroshot → laya → kev → semif → jev → rules` |
-| `[image_embed.judge.jev].enabled` | 在线末选，默认 **false**（隐私） |
+| `[image_embed.judge].mode` | 判断层：`model` / `host` / `heuristic`（面板可切换） |
+| `[image_embed.judge].perception` | 识图链，默认 `["sensenova","zeroshot"]` |
 | `[image_embed].min_value` | 价值分下限，默认 0.45 |
 | `[image_embed].max_risk` | 任一风险维度上限，默认 0.60 |
 | `[image_embed.embedder].backend` | `auto` / `clip_onnx` / `caption_text` / `external` |

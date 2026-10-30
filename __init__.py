@@ -113,7 +113,8 @@ _BOARD_SCHEMA = {
         "query": {"type": "string", "description": "留空则列出最近收录"},
         "limit": {"type": "integer", "default": 12, "description": "返回条数，最多 24"},
         "include_thumb": {"type": "boolean", "default": True, "description": "附带缩略图 data URL"},
-        "lanlan": {"type": "string", "description": "按角色过滤；缺省用当前角色"},
+        "persona": {"type": "string", "description": "查看哪一档；缺省用当前角色"},
+        "lanlan": {"type": "string", "description": "同 persona（兼容旧调用）"},
     },
 }
 
@@ -148,6 +149,7 @@ _LOG_SCHEMA = {
             "enum": ["", "info", "warn", "error"],
             "description": "按级别过滤；留空为全部",
         },
+        "persona": {"type": "string", "description": "查看哪一档的日志；缺省用当前角色"},
     },
 }
 

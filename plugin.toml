@@ -1,8 +1,8 @@
 [plugin]
 id = "neko_image_embed"
 name = "图像记忆库"
-description = "把图片变成可检索的记忆：先做合规与质量闸门，再由判定链（宿主视觉模型 → laya → kev → semif → jev → 规则）结合当前人设决定是否收录，压缩后编码成向量入库。聊天时角色可检索并用图片回应。"
-short_description = "Image memory: guard -> persona judge -> compress -> CLIP embedding, searchable in chat."
+description = "把图片变成可检索的角色记忆：Sensenova 识图，判断层三选一（模型/宿主槽位/启发式），按角色分档存档；聊天时角色可检索并直接用图片回应。"
+short_description = "Per-persona image memory: vision captioning, switchable judge, isolated archives."
 keywords = [
     "图嵌入",
     "图像嵌入",
@@ -13,7 +13,7 @@ keywords = [
     "CLIP",
     "neko_image_embed",
 ]
-version = "0.1.0"
+version = "0.1.1"
 type = "plugin"
 entry = "plugin.plugins.neko_image_embed:NekoImageEmbedPlugin"
 
@@ -52,12 +52,6 @@ sync_call_in_handler = "warn"
 [plugin_runtime]
 enabled = true
 auto_start = true
-
-# ---------------------------------------------------------------------------
-# 静态入口声明：宿主重扫插件时只认这里与 plugin.meta.json 的声明来重建入口表，
-# 不写的话 /plugins/refresh 之后面板 action 会 404。
-# tests/test_manifest_entries.py 会校验这里与 @plugin_entry 装饰器完全一致。
-# ---------------------------------------------------------------------------
 
 # 业务配置的首次模板在 config.example.toml；安装后宿主会复制到
 # <状态目录>/config/plugin.toml，改那里才生效。密钥一律留空。
